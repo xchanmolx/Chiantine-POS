@@ -330,7 +330,9 @@ namespace PointOfSaleViewerForm
             {
                 frmPrintAllOrders frm = new frmPrintAllOrders(DateTime.Now.ToString("dddd, MMMM dd, yyyy"), string.Format("{0}", bunifuMaterialTextboxOverAllTotal.Text), string.Format("{0}", txtStoreName.Text));
 
-                frm.Show();
+                frm.ShowDialog();
+
+                txtSearchSalesProduct.Focus();
             }
             catch (Exception ex)
             {
