@@ -86,6 +86,9 @@
             this.lblDiscounted = new System.Windows.Forms.Label();
             this.lblDiscountedNumber = new System.Windows.Forms.Label();
             this.btnCalculator = new System.Windows.Forms.Button();
+            this.lblPurchasedItems = new System.Windows.Forms.Label();
+            this.btnShow = new System.Windows.Forms.Button();
+            this.btnHide = new System.Windows.Forms.Button();
             this.idDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sKUDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.productNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -260,6 +263,8 @@
             this.dgvOrderProductLists.TabStop = false;
             this.dgvOrderProductLists.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvOrderProductLists_CellClick);
             this.dgvOrderProductLists.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dgvOrderProductLists_RowPrePaint);
+            this.dgvOrderProductLists.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvOrderProductLists_RowsAdded);
+            this.dgvOrderProductLists.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dgvOrderProductLists_RowsRemoved);
             // 
             // dgvProductLists
             // 
@@ -509,7 +514,7 @@
             this.btnLockSettings.Image = ((System.Drawing.Image)(resources.GetObject("btnLockSettings.Image")));
             this.btnLockSettings.Location = new System.Drawing.Point(842, 57);
             this.btnLockSettings.Name = "btnLockSettings";
-            this.btnLockSettings.Size = new System.Drawing.Size(120, 177);
+            this.btnLockSettings.Size = new System.Drawing.Size(120, 134);
             this.btnLockSettings.TabIndex = 17;
             this.btnLockSettings.TabStop = false;
             this.btnLockSettings.Text = "Loc&k Settings";
@@ -1012,6 +1017,59 @@
             this.btnCalculator.UseVisualStyleBackColor = false;
             this.btnCalculator.Click += new System.EventHandler(this.btnCalculator_Click);
             // 
+            // lblPurchasedItems
+            // 
+            this.lblPurchasedItems.AutoSize = true;
+            this.lblPurchasedItems.ForeColor = System.Drawing.Color.Black;
+            this.lblPurchasedItems.Location = new System.Drawing.Point(652, 539);
+            this.lblPurchasedItems.Name = "lblPurchasedItems";
+            this.lblPurchasedItems.Size = new System.Drawing.Size(140, 21);
+            this.lblPurchasedItems.TabIndex = 27;
+            this.lblPurchasedItems.Text = "Purchased Items: 0";
+            this.lblPurchasedItems.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // btnShow
+            // 
+            this.btnShow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.btnShow.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnShow.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.btnShow.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.btnShow.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btnShow.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnShow.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnShow.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            this.btnShow.Image = ((System.Drawing.Image)(resources.GetObject("btnShow.Image")));
+            this.btnShow.Location = new System.Drawing.Point(824, 221);
+            this.btnShow.Name = "btnShow";
+            this.btnShow.Size = new System.Drawing.Size(138, 99);
+            this.btnShow.TabIndex = 28;
+            this.btnShow.TabStop = false;
+            this.btnShow.Text = "Sho&w Total Sales";
+            this.btnShow.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnShow.UseVisualStyleBackColor = false;
+            this.btnShow.Click += new System.EventHandler(this.btnShow_Click);
+            // 
+            // btnHide
+            // 
+            this.btnHide.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.btnHide.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnHide.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.btnHide.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.btnHide.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btnHide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHide.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnHide.ForeColor = System.Drawing.Color.Red;
+            this.btnHide.Image = ((System.Drawing.Image)(resources.GetObject("btnHide.Image")));
+            this.btnHide.Location = new System.Drawing.Point(821, 221);
+            this.btnHide.Name = "btnHide";
+            this.btnHide.Size = new System.Drawing.Size(128, 99);
+            this.btnHide.TabIndex = 29;
+            this.btnHide.TabStop = false;
+            this.btnHide.Text = "&Hide Total Sales";
+            this.btnHide.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnHide.UseVisualStyleBackColor = false;
+            this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
+            // 
             // idDataGridViewTextBoxColumn
             // 
             this.idDataGridViewTextBoxColumn.DataPropertyName = "Id";
@@ -1079,6 +1137,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
             this.CancelButton = this.btnShutdown;
             this.ClientSize = new System.Drawing.Size(1366, 749);
+            this.Controls.Add(this.lblPurchasedItems);
             this.Controls.Add(this.btnCalculator);
             this.Controls.Add(this.lblDiscountedNumber);
             this.Controls.Add(this.lblDiscounted);
@@ -1103,6 +1162,8 @@
             this.Controls.Add(this.btnSalesProduct);
             this.Controls.Add(this.btnAddProduct);
             this.Controls.Add(this.lblDiscount);
+            this.Controls.Add(this.btnHide);
+            this.Controls.Add(this.btnShow);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -1194,6 +1255,9 @@
         private System.Windows.Forms.Label lblDiscounted;
         private System.Windows.Forms.Label lblDiscountedNumber;
         private System.Windows.Forms.Button btnCalculator;
+        private System.Windows.Forms.Label lblPurchasedItems;
+        private System.Windows.Forms.Button btnShow;
+        private System.Windows.Forms.Button btnHide;
     }
 }
 

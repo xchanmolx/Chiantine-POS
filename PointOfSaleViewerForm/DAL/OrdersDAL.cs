@@ -24,7 +24,7 @@ namespace PointOfSaleViewerForm
             try
             {
                 // SQL Query to get data from Database
-                string sql = "SELECT * FROM Orders";
+                string sql = "SELECT * FROM Orders ORDER BY Id DESC";
 
                 // For executing command
                 SqlCommand cmd = new SqlCommand(sql, conn);
@@ -143,44 +143,5 @@ namespace PointOfSaleViewerForm
             return isSuccess;
         }
         #endregion
-
-        #region Method for Search Functionality
-        public DataTable Search(string keywords)
-        {
-            // SQL connection for database connection
-            SqlConnection conn = new SqlConnection(GlobalConfig.CnnString(db));
-
-            // Creating data table to hold the data from database temporarily
-            DataTable dt = new DataTable();
-
-            try
-            {
-                // SQL Query to Search items from database
-                String sql = "SELECT * FROM Orders WHERE SKU LIKE '%" + keywords + "%' OR ProductName LIKE '%" + keywords + "%' OR Price LIKE '%" + keywords + "%' OR Quantity LIKE '%" + keywords + "%' OR Total LIKE '%" + keywords + "%' OR DatePurchased LIKE '%" + keywords + "%' ";
-
-                // Creating SQL Commant to execute the query
-                SqlCommand cmd = new SqlCommand(sql, conn);
-
-                // Getting data from database
-                SqlDataAdapter sda = new SqlDataAdapter(cmd);
-
-                // Open database connection
-                conn.Open();
-
-                // Passing values from adapter to Data Table dt
-                sda.Fill(dt);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Search Information!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            finally
-            {
-                conn.Close();
-            }
-
-            return dt;
-        }
-        #endregion        
     }
 }

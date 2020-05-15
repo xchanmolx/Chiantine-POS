@@ -10,6 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PointOfSaleViewerForm.UI;
+using PointOfSaleViewerForm.DataSet;
+using Microsoft.Reporting.WinForms;
 
 namespace PointOfSaleViewerForm
 {
@@ -34,22 +37,28 @@ namespace PointOfSaleViewerForm
         {
             try
             {
-                using (SqlConnection cn = new SqlConnection(GlobalConfig.CnnString(db)))
+                FillTextStoreName();
+
+                if (String.IsNullOrWhiteSpace(txtSearchSalesProduct.Text) && String.IsNullOrWhiteSpace(txtSearchDate.Text))
                 {
-                    DataTable dt = dal.Select();
-                    dgvSalesProduct.DataSource = await Task.Run(() => dt);
+                    using (SqlConnection cn = new SqlConnection(GlobalConfig.CnnString(db)))
+                    {
+                        DataTable dt = dal.Select();
+                        dgvSalesProduct.DataSource = await Task.Run(() => dt);
 
-                    dgvSalesProduct.Columns[0].Visible = false;
-                    dgvSalesProduct.Columns[1].Width = 150; // SKU
-                    dgvSalesProduct.Columns[2].Width = 199; // Product Name
-                    dgvSalesProduct.Columns[3].Width = 70;  // Price
-                    dgvSalesProduct.Columns[4].Width = 70; // Quantity
-                    dgvSalesProduct.Columns[5].Width = 100; // Total
-                    dgvSalesProduct.Columns[6].Width = 178; // Date Purchased 
+                        dgvSalesProduct.Columns[0].Visible = false;
+                        dgvSalesProduct.Columns[1].Width = 150; // SKU
+                        dgvSalesProduct.Columns[2].Width = 199; // Product Name
+                        dgvSalesProduct.Columns[3].Width = 70;  // Price
+                        dgvSalesProduct.Columns[4].Width = 70; // Quantity
+                        dgvSalesProduct.Columns[5].Width = 100; // Total
+                        dgvSalesProduct.Columns[6].Width = 178; // Date Purchased 
 
-                    dgvSalesProduct.Columns[1].HeaderText = "SKU";
-                    dgvSalesProduct.Columns[4].HeaderText = "Qty.";
-                    dgvSalesProduct.Columns[6].HeaderText = "Date Purchased";
+                        dgvSalesProduct.Columns[1].HeaderText = "SKU";
+                        dgvSalesProduct.Columns[2].HeaderText = "Product Name";
+                        dgvSalesProduct.Columns[4].HeaderText = "Qty.";
+                        dgvSalesProduct.Columns[6].HeaderText = "Date Purchased";
+                    }
                 }
             }
             catch (Exception ex)
@@ -86,7 +95,7 @@ namespace PointOfSaleViewerForm
                         }
                     }
 
-                    bunifuMaterialTextboxOverAllTotal.Text = "OverAll Total: ₱ 0.00";
+                    bunifuMaterialTextboxOverAllTotal.Text = "Overall Total: ₱ 0.00";
                     MessageBox.Show("Deleted All successfully.", "Delete Information!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -114,30 +123,33 @@ namespace PointOfSaleViewerForm
 
         private void txtSearchSalesProduct_TextChanged(object sender, EventArgs e)
         {
-            // Get the keywords
-            string keywords = txtSearchSalesProduct.Text;
+            BindingSource bs = new BindingSource();
+            bs.DataSource = dgvSalesProduct.DataSource;
+            bs.Filter = "SKU  LIKE '%" + txtSearchSalesProduct.Text + "%' AND DatePurchased LIKE '%" + txtSearchDate.Text + "%' ";
+            dgvSalesProduct.DataSource = bs;
+        }
 
-            // Filter the items based on keywords
-            if (keywords != null)
-            {
-                // Use search method to display items
-                DataTable dt = dal.Search(keywords);
-                dgvSalesProduct.DataSource = dt;
-            }
-            else
-            {
-                // Use select method to display all items
-                DataTable dt = dal.Select();
-                dgvSalesProduct.DataSource = dt;
-            }
+        private void txtSearchDate_TextChanged(object sender, EventArgs e)
+        {
+            BindingSource bs = new BindingSource();
+            bs.DataSource = dgvSalesProduct.DataSource;
+            bs.Filter = "SKU  LIKE '%" + txtSearchSalesProduct.Text + "%' AND DatePurchased LIKE '%" + txtSearchDate.Text + "%' ";
+            dgvSalesProduct.DataSource = bs;
         }
 
         private void dgvSalesProduct_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
             if (e.RowIndex != -1)
             {                
-                bunifuMaterialTextboxOverAllTotal.Text = String.Format("OverAll Total: ₱ {0:N2}", dgvSalesProduct.Rows.OfType<DataGridViewRow>().Sum(row => Convert.ToDecimal(row.Cells["Total"].Value)));
+                bunifuMaterialTextboxOverAllTotal.Text = String.Format("Overall Total: ₱ {0:N2}", dgvSalesProduct.Rows.OfType<DataGridViewRow>().Sum(row => Convert.ToDecimal(row.Cells["Total"].Value)));
             }
+
+            lblOrderedItems.Text = "Ordered Items: " + dgvSalesProduct.Rows.Count.ToString();
+        }
+
+        private void dgvSalesProduct_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        {
+            lblOrderedItems.Text = "Ordered Items: " + dgvSalesProduct.Rows.Count.ToString();
         }
 
         private void btnBackToPointOfSale_Click(object sender, EventArgs e)
@@ -310,6 +322,49 @@ namespace PointOfSaleViewerForm
             txtQuantity.Visible = false;
             txtTotal.Visible = false;
             txtDatePurchased.Visible = false;
+        }
+
+        private void btnPrintAll_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmPrintAllOrders frm = new frmPrintAllOrders(DateTime.Now.ToString("dddd, MMMM dd, yyyy"), string.Format("{0}", bunifuMaterialTextboxOverAllTotal.Text), string.Format("{0}", txtStoreName.Text));
+
+                frm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Print All Orders Information!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        public void FillTextStoreName()
+        {
+            using (SqlConnection conn = new SqlConnection(GlobalConfig.CnnString(db)))
+            {
+                string query = "SELECT store_name FROM StoreName";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+
+                    using (SqlDataReader read = cmd.ExecuteReader())
+                    {
+                        // Admin Name
+                        read.Read();
+                        txtStoreName.Text = (read.GetValue(0).ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
         }
 
         private void btnShutdown_Click(object sender, EventArgs e)
