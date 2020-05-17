@@ -43,6 +43,18 @@ namespace PointOfSaleViewerForm
             dal.DeleteAllTotalSalesPastDay();
         }
 
+        public string LabelText
+        {
+            get
+            {
+                return this.lblStoreName.Text;
+            }
+            set
+            {
+                this.lblStoreName.Text = value;
+            }
+        }
+
         private void frmMain_Load(object sender, EventArgs e)
         {
             try
@@ -234,11 +246,28 @@ namespace PointOfSaleViewerForm
 
         private void btnPrintReceipt_Click(object sender, EventArgs e)
         {
-            using (PrintReceiptForm frm = new PrintReceiptForm(productBindingSource.DataSource as List<Product>, string.Format("{0:n}", totalOrder), string.Format("{0:n}", txtCash.Text), string.Format("{0:n}", Convert.ToDecimal(txtCash.Text) - totalOrder), DateTime.Now.ToString("MM/dd/yyyy"), string.Format("{0}", lblStoreName.Text), this, string.Format("{0}", lblDiscountedNumber.Text)))
+            try
             {
-                frm.ShowDialog();
+                if (Convert.ToDecimal(txtCash.Text) < Convert.ToDecimal(txtTotalOrder.Text))
+                {
+                    MessageBox.Show("Cash not less than to the total order.", "Print Receipt Information!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txtCash.Text = "";
+                }
+                else
+                {
+                    using (PrintReceiptForm frm = new PrintReceiptForm(productBindingSource.DataSource as List<Product>, string.Format("{0:n}", totalOrder), string.Format("{0:n}", txtCash.Text), string.Format("{0:n}", Convert.ToDecimal(txtCash.Text) - totalOrder), DateTime.Now.ToString("MM/dd/yyyy"), string.Format("{0}", lblStoreName.Text), this, string.Format("{0}", lblDiscountedNumber.Text)))
+                    {
+                        frm.ShowDialog();
+                    }
+                    txtCash.Focus();
+                }
             }
-            txtCash.Focus();         
+            catch (Exception)
+            {
+                MessageBox.Show("Enter a valid amount or money, not include a letter or word.", "Print Receipt Information!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                txtCash.Text = "";
+            }
+            txtCash.Focus();
         }
 
         private void btnPrintTotalSales_Click(object sender, EventArgs e)
@@ -406,6 +435,7 @@ namespace PointOfSaleViewerForm
                         btnAddProduct.Enabled = false;
                         txtSearchProductLists.Enabled = false;
                         txtQuantity.Enabled = false;
+                        txtDiscount.Enabled = false;
 
                         btnPrintReceipt.Enabled = true;
 
@@ -417,6 +447,14 @@ namespace PointOfSaleViewerForm
                         btnRemove.Enabled = false;
                         btnConfirmOrder.Enabled = false;
                         btnCanceledOrder.Enabled = false;
+
+                        // disabled button when confirm order
+                        btnMinimize.Enabled = false;
+                        btnShutdown.Enabled = false;
+                        btnCalculator.Enabled = false;
+                        btnContact.Enabled = false;
+                        btnOpenSettings.Enabled = false;
+                        btnPrintTotalSales.Enabled = false;
                     }
                     else
                     {
@@ -899,22 +937,6 @@ namespace PointOfSaleViewerForm
             ((TextBox)sender).SelectAll();
         }
 
-        private bool ValidateCashForm()
-        {
-            bool output = true;
-
-            bool cashValidNumber = decimal.TryParse(txtCash.Text, out cash);
-
-            if (!cashValidNumber)
-            {
-                output = false;
-                MessageBox.Show("Enter a valid amount or money, not include a letter or word.", "Cash Information!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                txtCash.Text = "";
-            }
-
-            return output;
-        }
-
         private void txtCash_TextChanged(object sender, EventArgs e)
         {
             decimal.TryParse(txtCash.Text, out cash);
@@ -935,59 +957,66 @@ namespace PointOfSaleViewerForm
             {
                 if (e.KeyCode == Keys.Enter)
                 {
-                    using (SqlConnection con = new SqlConnection(GlobalConfig.CnnString(db)))
+                    if (Convert.ToDecimal(txtCash.Text) < Convert.ToDecimal(txtTotalOrder.Text))
                     {
-                        for (int i = 0; i < dgvOrderProductLists.Rows.Count; i++)
-                        {
-                            SqlCommand cmd = new SqlCommand(@"INSERT INTO Orders (SKU, ProductName, Price, Quantity, Total, DatePurchased) VALUES(@SKU, @ProductName, @Price, @Quantity, @Total, @DatePurchased)", con);
-
-                            con.Open();
-                            cmd.Parameters.AddWithValue("@SKU", dgvOrderProductLists.Rows[i].Cells[1].Value.ToString());
-                            cmd.Parameters.AddWithValue("@ProductName", dgvOrderProductLists.Rows[i].Cells[2].Value.ToString());
-                            cmd.Parameters.AddWithValue("@Price", dgvOrderProductLists.Rows[i].Cells[3].Value.ToString());
-                            cmd.Parameters.AddWithValue("@Quantity", dgvOrderProductLists.Rows[i].Cells[4].Value.ToString());
-                            cmd.Parameters.AddWithValue("@Total", dgvOrderProductLists.Rows[i].Cells[5].Value.ToString());
-                            cmd.Parameters.AddWithValue("@DatePurchased", DateTime.Now.ToString("MM-dd-yyyy hh:mm tt"));
-                            cmd.ExecuteNonQuery();
-                            con.Close();
-                        }
-                        //dgvOrderProductLists.Rows.Clear();
+                        MessageBox.Show("Cash not less than to the total order.", "Cash Information!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        txtCash.Text = "";
                     }
-
-                    if (ValidateCashForm())
+                    else
                     {
-                        if (Convert.ToDecimal(txtCash.Text) < Convert.ToDecimal(txtTotalOrder.Text))
+                        // enable button when TextBox Cash enter
+                        btnMinimize.Enabled = true;
+                        btnShutdown.Enabled = true;
+                        btnCalculator.Enabled = true;
+                        btnContact.Enabled = true;
+                        btnOpenSettings.Enabled = true;
+                        btnPrintTotalSales.Enabled = true;
+
+                        using (SqlConnection con = new SqlConnection(GlobalConfig.CnnString(db)))
                         {
-                            MessageBox.Show("Cash not less than to the total order.", "Cash Information!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            txtCash.Text = "";
+                            for (int i = 0; i < dgvOrderProductLists.Rows.Count; i++)
+                            {
+                                SqlCommand cmd = new SqlCommand(@"INSERT INTO Orders (SKU, ProductName, Price, Quantity, Total, DatePurchased) VALUES(@SKU, @ProductName, @Price, @Quantity, @Total, @DatePurchased)", con);
+
+                                con.Open();
+                                cmd.Parameters.AddWithValue("@SKU", dgvOrderProductLists.Rows[i].Cells[1].Value.ToString());
+                                cmd.Parameters.AddWithValue("@ProductName", dgvOrderProductLists.Rows[i].Cells[2].Value.ToString());
+                                cmd.Parameters.AddWithValue("@Price", dgvOrderProductLists.Rows[i].Cells[3].Value.ToString());
+                                cmd.Parameters.AddWithValue("@Quantity", dgvOrderProductLists.Rows[i].Cells[4].Value.ToString());
+                                cmd.Parameters.AddWithValue("@Total", dgvOrderProductLists.Rows[i].Cells[5].Value.ToString());
+                                cmd.Parameters.AddWithValue("@DatePurchased", DateTime.Now.ToString("MM-dd-yyyy hh:mm tt"));
+                                cmd.ExecuteNonQuery();
+                                con.Close();
+                            }
                         }
-                        else
-                        {
-                            productBindingSource.DataSource = null;
-                            txtTotalOrder.Text = "0.00";
-                            txtCash.Text = "0";
-                            txtChange.Text = "0.00";
 
-                            productBindingSource.DataSource = new List<Product>();
+                        productBindingSource.DataSource = null;
+                        txtTotalOrder.Text = "0.00";
+                        txtCash.Text = "0";
+                        txtChange.Text = "0.00";
 
-                            totalOrder = 0M;
+                        productBindingSource.DataSource = new List<Product>();
 
-                            txtSearchProductLists.Enabled = true;
-                            txtQuantity.Enabled = true;
+                        totalOrder = 0M;
 
-                            btnPrintReceipt.Enabled = false;
+                        txtSearchProductLists.Enabled = true;
+                        txtQuantity.Enabled = true;
+                        txtDiscount.Enabled = true;
 
-                            discount = 0;
-                            lblDiscountedNumber.Text = Convert.ToString(discount);
+                        btnPrintReceipt.Enabled = false;
 
-                            txtSearchProductLists.Focus();
-                        }
+                        discount = 0;
+                        lblDiscountedNumber.Text = Convert.ToString(discount);
+
+                        txtSearchProductLists.Focus();
                     }
+                   
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show(ex.Message, "txtCash_KeyDown Information!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Enter a valid amount or money, not include a letter or word.", "Cash Information!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                txtCash.Text = "";
             }
         }
 
@@ -1153,6 +1182,30 @@ namespace PointOfSaleViewerForm
                 timerShutdown.Stop();
                 Application.Exit();
             }
+        }
+
+        private void dgvOrderProductLists_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            lblPurchasedItems.Text = "Purchased Items: " + dgvOrderProductLists.Rows.Count.ToString();
+        }
+
+        private void dgvOrderProductLists_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        {
+            lblPurchasedItems.Text = "Purchased Items: " + dgvOrderProductLists.Rows.Count.ToString();
+        }
+
+        private void btnShow_Click(object sender, EventArgs e)
+        {
+            gpbTotalSales.Visible = true;
+            btnShow.Visible = false;
+            btnHide.Visible = true;
+        }
+
+        private void btnHide_Click(object sender, EventArgs e)
+        {
+            gpbTotalSales.Visible = false;
+            btnHide.Visible = false;
+            btnShow.Visible = true;
         }
 
         private void btnShutdown_Click(object sender, EventArgs e)

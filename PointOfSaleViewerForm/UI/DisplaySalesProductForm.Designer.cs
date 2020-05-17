@@ -46,6 +46,12 @@
             this.lblMonthDayYear = new System.Windows.Forms.Label();
             this.txtSKU = new Bunifu.Framework.UI.BunifuMaterialTextbox();
             this.btnShutdown = new System.Windows.Forms.Button();
+            this.btnPrintAll = new System.Windows.Forms.Button();
+            this.txtStoreName = new Bunifu.Framework.UI.BunifuMaterialTextbox();
+            this.lblOrderedItems = new System.Windows.Forms.Label();
+            this.lblLongPaper = new System.Windows.Forms.Label();
+            this.txtSearchDate = new System.Windows.Forms.TextBox();
+            this.lblSearchDatePurchased = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSalesProduct)).BeginInit();
             this.SuspendLayout();
             // 
@@ -74,6 +80,7 @@
             this.dgvSalesProduct.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvSalesProduct_CellFormatting);
             this.dgvSalesProduct.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dgvSalesProduct_RowPrePaint);
             this.dgvSalesProduct.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvSalesProduct_RowsAdded);
+            this.dgvSalesProduct.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dgvSalesProduct_RowsRemoved);
             this.dgvSalesProduct.Click += new System.EventHandler(this.dgvSalesProduct_Click);
             // 
             // txtSearchSalesProduct
@@ -85,7 +92,7 @@
             this.txtSearchSalesProduct.Font = new System.Drawing.Font("Segoe UI", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSearchSalesProduct.Location = new System.Drawing.Point(41, 34);
             this.txtSearchSalesProduct.Name = "txtSearchSalesProduct";
-            this.txtSearchSalesProduct.Size = new System.Drawing.Size(811, 43);
+            this.txtSearchSalesProduct.Size = new System.Drawing.Size(400, 43);
             this.txtSearchSalesProduct.TabIndex = 9;
             this.txtSearchSalesProduct.TextChanged += new System.EventHandler(this.txtSearchSalesProduct_TextChanged);
             this.txtSearchSalesProduct.Enter += new System.EventHandler(this.txtSearchSalesProduct_Enter);
@@ -119,9 +126,9 @@
             this.lblSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.lblSearch.Location = new System.Drawing.Point(36, 3);
             this.lblSearch.Name = "lblSearch";
-            this.lblSearch.Size = new System.Drawing.Size(70, 28);
+            this.lblSearch.Size = new System.Drawing.Size(112, 28);
             this.lblSearch.TabIndex = 12;
-            this.lblSearch.Text = "Search";
+            this.lblSearch.Text = "Search SKU";
             // 
             // bunifuMaterialTextboxOverAllTotal
             // 
@@ -160,7 +167,7 @@
             this.btnBackToPointOfSale.Size = new System.Drawing.Size(494, 113);
             this.btnBackToPointOfSale.TabIndex = 17;
             this.btnBackToPointOfSale.TabStop = false;
-            this.btnBackToPointOfSale.Text = "&Point of Sale";
+            this.btnBackToPointOfSale.Text = "Point of &Sale";
             this.btnBackToPointOfSale.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnBackToPointOfSale.UseVisualStyleBackColor = false;
             this.btnBackToPointOfSale.Click += new System.EventHandler(this.btnBackToPointOfSale_Click);
@@ -360,6 +367,93 @@
             this.btnShutdown.UseVisualStyleBackColor = false;
             this.btnShutdown.Click += new System.EventHandler(this.btnShutdown_Click);
             // 
+            // btnPrintAll
+            // 
+            this.btnPrintAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.btnPrintAll.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnPrintAll.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnPrintAll.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.btnPrintAll.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.btnPrintAll.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.btnPrintAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPrintAll.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPrintAll.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnPrintAll.Image = ((System.Drawing.Image)(resources.GetObject("btnPrintAll.Image")));
+            this.btnPrintAll.Location = new System.Drawing.Point(885, 334);
+            this.btnPrintAll.Name = "btnPrintAll";
+            this.btnPrintAll.Size = new System.Drawing.Size(213, 64);
+            this.btnPrintAll.TabIndex = 28;
+            this.btnPrintAll.TabStop = false;
+            this.btnPrintAll.Text = "&Print by Search";
+            this.btnPrintAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnPrintAll.UseVisualStyleBackColor = false;
+            this.btnPrintAll.Click += new System.EventHandler(this.btnPrintAll_Click);
+            // 
+            // txtStoreName
+            // 
+            this.txtStoreName.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtStoreName.Font = new System.Drawing.Font("Century Gothic", 9.75F);
+            this.txtStoreName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txtStoreName.HintForeColor = System.Drawing.Color.Empty;
+            this.txtStoreName.HintText = "Store Name";
+            this.txtStoreName.isPassword = false;
+            this.txtStoreName.LineFocusedColor = System.Drawing.Color.Blue;
+            this.txtStoreName.LineIdleColor = System.Drawing.Color.Gray;
+            this.txtStoreName.LineMouseHoverColor = System.Drawing.Color.Blue;
+            this.txtStoreName.LineThickness = 3;
+            this.txtStoreName.Location = new System.Drawing.Point(41, 687);
+            this.txtStoreName.Margin = new System.Windows.Forms.Padding(4);
+            this.txtStoreName.Name = "txtStoreName";
+            this.txtStoreName.Size = new System.Drawing.Size(169, 33);
+            this.txtStoreName.TabIndex = 29;
+            this.txtStoreName.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.txtStoreName.Visible = false;
+            // 
+            // lblOrderedItems
+            // 
+            this.lblOrderedItems.AutoSize = true;
+            this.lblOrderedItems.ForeColor = System.Drawing.Color.Black;
+            this.lblOrderedItems.Location = new System.Drawing.Point(675, 687);
+            this.lblOrderedItems.Name = "lblOrderedItems";
+            this.lblOrderedItems.Size = new System.Drawing.Size(126, 21);
+            this.lblOrderedItems.TabIndex = 30;
+            this.lblOrderedItems.Text = "Ordered Items: 0";
+            this.lblOrderedItems.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblLongPaper
+            // 
+            this.lblLongPaper.AutoSize = true;
+            this.lblLongPaper.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLongPaper.Location = new System.Drawing.Point(952, 378);
+            this.lblLongPaper.Name = "lblLongPaper";
+            this.lblLongPaper.Size = new System.Drawing.Size(119, 17);
+            this.lblLongPaper.TabIndex = 31;
+            this.lblLongPaper.Text = "8.5 x 13 inch paper";
+            // 
+            // txtSearchDate
+            // 
+            this.txtSearchDate.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.txtSearchDate.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories;
+            this.txtSearchDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.txtSearchDate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearchDate.Font = new System.Drawing.Font("Segoe UI", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSearchDate.Location = new System.Drawing.Point(452, 34);
+            this.txtSearchDate.Name = "txtSearchDate";
+            this.txtSearchDate.Size = new System.Drawing.Size(400, 43);
+            this.txtSearchDate.TabIndex = 32;
+            this.txtSearchDate.TextChanged += new System.EventHandler(this.txtSearchDate_TextChanged);
+            // 
+            // lblSearchDatePurchased
+            // 
+            this.lblSearchDatePurchased.AutoSize = true;
+            this.lblSearchDatePurchased.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSearchDatePurchased.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            this.lblSearchDatePurchased.Location = new System.Drawing.Point(447, 3);
+            this.lblSearchDatePurchased.Name = "lblSearchDatePurchased";
+            this.lblSearchDatePurchased.Size = new System.Drawing.Size(210, 28);
+            this.lblSearchDatePurchased.TabIndex = 33;
+            this.lblSearchDatePurchased.Text = "Search Date Purchased";
+            // 
             // DisplaySalesProductForm
             // 
             this.AcceptButton = this.btnBackToPointOfSale;
@@ -368,6 +462,12 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(213)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
             this.CancelButton = this.btnShutdown;
             this.ClientSize = new System.Drawing.Size(1365, 708);
+            this.Controls.Add(this.lblSearchDatePurchased);
+            this.Controls.Add(this.txtSearchDate);
+            this.Controls.Add(this.lblLongPaper);
+            this.Controls.Add(this.lblOrderedItems);
+            this.Controls.Add(this.txtStoreName);
+            this.Controls.Add(this.btnPrintAll);
             this.Controls.Add(this.btnShutdown);
             this.Controls.Add(this.txtSKU);
             this.Controls.Add(this.txtDatePurchased);
@@ -417,5 +517,11 @@
         private System.Windows.Forms.Label lblMonthDayYear;
         private Bunifu.Framework.UI.BunifuMaterialTextbox txtSKU;
         private System.Windows.Forms.Button btnShutdown;
+        private System.Windows.Forms.Button btnPrintAll;
+        private Bunifu.Framework.UI.BunifuMaterialTextbox txtStoreName;
+        private System.Windows.Forms.Label lblOrderedItems;
+        private System.Windows.Forms.Label lblLongPaper;
+        private System.Windows.Forms.TextBox txtSearchDate;
+        private System.Windows.Forms.Label lblSearchDatePurchased;
     }
 }
