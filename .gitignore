@@ -223,6 +223,9 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+*.sql
+*.jfm
+*.dbmdl
 
 # Visual Studio LightSwitch build output
 **/*.HTMLClient/GeneratedArtifacts
